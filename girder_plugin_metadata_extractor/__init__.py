@@ -18,8 +18,16 @@
 ###############################################################################
 
 from girder import events
+from girder.plugin import GirderPlugin
 
 from . metadata_extractor import ServerMetadataExtractor
+
+
+class MetadataExtractorPlugin(GirderPlugin):
+    NPM_PACKAGE_NAME = '@girder/metadata_extractor'
+
+    def load(self, info):
+        events.bind('data.process', 'metadata_extractor_handler', handler)
 
 
 def handler(event):
@@ -27,7 +35,3 @@ def handler(event):
         metadataExtractor = ServerMetadataExtractor(event.info['assetstore'],
                                                     event.info['file'])
         metadataExtractor.extractMetadata()
-
-
-def load(info):
-    events.bind('data.process', 'metadata_extractor_handler', handler)
